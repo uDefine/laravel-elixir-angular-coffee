@@ -14,13 +14,13 @@ var notify = require('gulp-notify');
  |
  */
 
-elixir.extend('angularCoffee', function(src, output, outputFilename) {
+elixir.extend('angularCoffee', function(args, subName) {
 
     var config = this;
 
-    var baseDir = src || config.assetsDir + 'coffee/';
+    var baseDir = args.src || config.assetsDir + 'coffee/';
 
-    gulp.task('angularCoffee', function() {
+    gulp.task('angularCoffee' + subName, function() {
 
         var onError = function(err) {
             notify.onError({
@@ -37,10 +37,10 @@ elixir.extend('angularCoffee', function(src, output, outputFilename) {
             .pipe(plugins.if(config.sourcemaps, plugins.sourcemaps.init()))
             .pipe(plugins.coffee({bare: true}).on('error', onError))
             .pipe(plugins.ngAnnotate())
-            .pipe(plugins.concat(outputFilename || 'app.js'))
+            .pipe(plugins.concat(args.outputFilename || 'app.js'))
             .pipe(plugins.if(config.production, plugins.uglify()))
             .pipe(plugins.if(config.sourcemaps, plugins.sourcemaps.write('.')))
-            .pipe(gulp.dest(output || config.jsOutput))
+            .pipe(gulp.dest(args.output || config.jsOutput))
             .pipe(notify({
                 title: 'Laravel Elixir',
                 subtitle: 'Angular Compiled!',
@@ -49,8 +49,8 @@ elixir.extend('angularCoffee', function(src, output, outputFilename) {
             }));
     });
 
-    this.registerWatcher('angularCoffee', baseDir);
+    this.registerWatcher('angularCoffee' + subName, baseDir);
 
-    return this.queueTask('angularCoffee');
+    return this.queueTask('angularCoffee' + subName);
 
 });
